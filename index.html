@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Mrinal Pramanick</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t) document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #f7f5f0;
+        --code-bg: #eeebe3;
+        --text: #3a3631;
+        --muted: #756e63;
+        --line: #e6e1d6;
+        --accent: #7d6d55;
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #1a1815;
+          --code-bg: #221f1b;
+          --text: #e0dbd1;
+          --muted: #9b9486;
+          --line: #2c2823;
+          --accent: #b9a98b;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #1a1815;
+        --code-bg: #221f1b;
+        --text: #e0dbd1;
+        --muted: #9b9486;
+        --line: #2c2823;
+        --accent: #b9a98b;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Newsreader", Georgia, "Times New Roman", serif;
+        font-size: 1.1875rem;
+        line-height: 1.8;
+        font-weight: 400;
+        font-optical-sizing: auto;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: color-mix(in srgb, var(--accent) 25%, transparent);
+      }
+      main {
+        max-width: 38rem;
+        margin: 0 auto;
+        padding: 6rem 1.5rem 7rem;
+      }
+      a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: var(--line);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+        transition:
+          color 0.2s ease,
+          text-decoration-color 0.2s ease;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+        border-radius: 2px;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        a:hover {
+          color: var(--accent);
+          text-decoration-color: var(--accent);
+        }
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 400;
+        margin: 0;
+      }
+      li::marker {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      main > * {
+        animation: rise 0.5s var(--ease) both;
+      }
+      main > :nth-child(2) {
+        animation-delay: 60ms;
+      }
+      main > :nth-child(3) {
+        animation-delay: 120ms;
+      }
+      main > :nth-child(4) {
+        animation-delay: 180ms;
+      }
+      main > :nth-child(5) {
+        animation-delay: 240ms;
+      }
+      main > :nth-child(6) {
+        animation-delay: 300ms;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        @keyframes rise {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      }
+      @media (max-width: 480px) {
+        body {
+          font-size: 1.125rem;
+        }
+        main {
+          padding-top: 4rem;
+        }
+      }
+
+      header {
+        margin-bottom: 5rem;
+      }
+      h1 {
+        font-size: clamp(2.1rem, 6vw, 2.8rem);
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+      }
+      section {
+        margin-bottom: 5rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+      }
+      ul.plain {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+      ul.plain li {
+        margin-top: 0.6rem;
+        padding-left: 0.25rem;
+      }
+      ul.plain li:first-child {
+        margin-top: 0;
+      }
+      .inline-link {
+        text-decoration-color: var(--muted);
+      }
+      .project + .project {
+        margin-top: 2.5rem;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        line-height: 1.4;
+      }
+      .project p {
+        margin: 0.4rem 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .project a.more {
+        display: inline-block;
+        margin-top: 0.6rem;
+        font-size: 0.95rem;
+      }
+      /* .posts a {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 0.6rem 0;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .posts .mono {
+        flex-shrink: 0;
+        padding-top: 0.25rem;
+      } */
+      .posts a {
+        display: block;
+        padding: 0.7rem 0;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .posts .meta {
+        display: block;
+        margin-top: 0.1rem;
+      }
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.75rem;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      body {
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
+      }
+      .theme-toggle {
+        font: inherit;
+        font-size: 0.95rem;
+        color: var(--muted);
+        background: none;
+        border: 0;
+        padding: 0.25rem 0.5rem;
+        margin: -0.25rem -0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition:
+          color 0.2s ease,
+          transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .theme-toggle:active {
+        transform: scale(0.97);
+      }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .theme-toggle:hover {
+          color: var(--accent);
+        }
+      }
+      .nav-right {
+        display: flex;
+        align-items: baseline;
+        gap: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Mrinal Pramanick</h1>
+      </header>
+
+      <section>
+        <h2>About</h2>
+        <ul class="plain">
+          <li>Grew up in Varanasi, India</li>
+          <li>On the Internet since 2015, which is my actual "home town"</li>
+          <li>
+            Started building software because I was curious about how things
+            worked
+          </li>
+          <li>
+            Work primarily on
+            <a
+              href="https://en.wikipedia.org/wiki/Software-defined_infrastructure"
+              class="inline-link"
+              >backend and infrastructure</a
+            >
+          </li>
+          <li>
+            Currently building distributed systems and backend infrastructure
+          </li>
+          <li>Working remotely with startups</li>
+        </ul>
+      </section>
+
+      <!-- <section>
+        <h2>Things I've built</h2>
+
+        <article class="project">
+          <div class="row">
+            <h3>StreamableMap</h3>
+            <span class="mono">Go</span>
+          </div>
+          <p>
+            A stream-oriented concurrent map exploring ordering, backpressure,
+            and efficient event processing.
+          </p>
+          <a class="more" href="#">GitHub</a>
+        </article>
+
+        <article class="project">
+          <div class="row">
+            <h3>Vidflow</h3>
+            <span class="mono">Go</span>
+          </div>
+          <p>
+            A video processing DAG exploring exactly-once execution,
+            backpressure, and distributed media workloads.
+          </p>
+          <a class="more" href="#">GitHub</a>
+        </article>
+
+        <article class="project">
+          <div class="row">
+            <h3>OpenTelemetry Bridge</h3>
+            <span class="mono">Go</span>
+          </div>
+          <p>
+            A transparent sidecar for introducing distributed tracing into HTTP
+            applications without changing the application itself.
+          </p>
+          <a class="more" href="#">Read more</a>
+        </article>
+      </section> -->
+
+      <section>
+        <h2>Writing</h2>
+        <div class="posts">
+          <a href="/articles/article-3.html">
+            <span>Serverless from beginners POV</span>
+            <span class="mono meta">Article · 2026</span>
+          </a>
+          <a
+            href="https://x.com/Hi_Mrinal/status/2110251049919586483"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Knowing when to scale horizontally and vertically</span>
+            <span class="mono meta">Post on X ↗ · 2026</span>
+          </a>
+          <a
+            href="https://x.com/Hi_Mrinal/status/2109474133994353028"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Something on Polymorphism in C++</span>
+            <span class="mono meta">Post on X ↗ · 2026</span>
+          </a>
+        </div>
+      </section>
+      <footer>
+        <a href="#">GitHub</a>
+        <a href="#">X</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Email</a>
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          type="button"
+          aria-label="Switch theme"
+        >
+          Dark
+        </button>
+      </footer>
+    </main>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var btn = document.getElementById("theme-toggle");
+        var media = window.matchMedia("(prefers-color-scheme: dark)");
+        function current() {
+          return (
+            root.getAttribute("data-theme") ||
+            (media.matches ? "dark" : "light")
+          );
+        }
+        function sync() {
+          var isDark = current() === "dark";
+          btn.textContent = isDark ? "Light" : "Dark";
+          btn.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light theme" : "Switch to dark theme",
+          );
+        }
+        btn.addEventListener("click", function () {
+          var next = current() === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("theme", next);
+          } catch (e) {}
+          sync();
+        });
+        media.addEventListener("change", function () {
+          var saved = null;
+          try {
+            saved = localStorage.getItem("theme");
+          } catch (e) {}
+          if (!saved) sync();
+        });
+        sync();
+      })();
+    </script>
+  </body>
+</html>

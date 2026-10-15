@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Building a Redis-like server from scratch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t) document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #f7f5f0;
+        --code-bg: #eeebe3;
+        --text: #3a3631;
+        --muted: #756e63;
+        --line: #e6e1d6;
+        --accent: #7d6d55;
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #1a1815;
+          --code-bg: #221f1b;
+          --text: #e0dbd1;
+          --muted: #9b9486;
+          --line: #2c2823;
+          --accent: #b9a98b;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #1a1815;
+        --code-bg: #221f1b;
+        --text: #e0dbd1;
+        --muted: #9b9486;
+        --line: #2c2823;
+        --accent: #b9a98b;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Newsreader", Georgia, "Times New Roman", serif;
+        font-size: 1.1875rem;
+        line-height: 1.8;
+        font-weight: 400;
+        font-optical-sizing: auto;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: color-mix(in srgb, var(--accent) 25%, transparent);
+      }
+      main {
+        max-width: 38rem;
+        margin: 0 auto;
+        padding: 6rem 1.5rem 7rem;
+      }
+      a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: var(--line);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+        transition:
+          color 0.2s ease,
+          text-decoration-color 0.2s ease;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+        border-radius: 2px;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        a:hover {
+          color: var(--accent);
+          text-decoration-color: var(--accent);
+        }
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 400;
+        margin: 0;
+      }
+      li::marker {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      main > * {
+        animation: rise 0.5s var(--ease) both;
+      }
+      main > :nth-child(2) {
+        animation-delay: 60ms;
+      }
+      main > :nth-child(3) {
+        animation-delay: 120ms;
+      }
+      main > :nth-child(4) {
+        animation-delay: 180ms;
+      }
+      main > :nth-child(5) {
+        animation-delay: 240ms;
+      }
+      main > :nth-child(6) {
+        animation-delay: 300ms;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        @keyframes rise {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      }
+      @media (max-width: 480px) {
+        body {
+          font-size: 1.125rem;
+        }
+        main {
+          padding-top: 4rem;
+        }
+      }
+
+      .progress {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: calc(2px + env(safe-area-inset-top, 0px));
+        z-index: 10;
+        pointer-events: none;
+      }
+      .progress span {
+        display: block;
+        height: 2px;
+        margin-top: env(safe-area-inset-top, 0px);
+        background: var(--accent);
+        opacity: 0.45;
+        transform-origin: left;
+        transform: scaleX(0);
+        transition: transform 0.15s linear;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 6rem;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+      nav a {
+        text-decoration: none;
+      }
+      header {
+        margin-bottom: 4.5rem;
+      }
+      .meta {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin-bottom: 1.25rem;
+      }
+      h1 {
+        font-size: clamp(2.1rem, 6vw, 2.8rem);
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+      }
+      .lede {
+        margin: 1.5rem 0 0;
+        font-size: 1.25rem;
+        line-height: 1.6;
+        color: var(--muted);
+        font-style: italic;
+      }
+      article > p {
+        margin: 1.6rem 0 0;
+      }
+      article > p:first-child {
+        margin-top: 0;
+      }
+      h2 {
+        font-size: 1.45rem;
+        line-height: 1.3;
+        margin: 4.5rem 0 1.25rem;
+      }
+      h2 + p {
+        margin-top: 0;
+      }
+      blockquote {
+        margin: 3rem 0;
+        padding: 0 0 0 1.5rem;
+        border-left: 1px solid var(--line);
+        font-size: 1.3rem;
+        line-height: 1.6;
+        font-style: italic;
+        color: var(--muted);
+      }
+      .code-label {
+        margin: 2.5rem 0 0.5rem;
+      }
+      pre {
+        margin: 0 0 2.5rem;
+        padding: 1.25rem 1.4rem;
+        overflow-x: auto;
+        background: var(--code-bg);
+        border-radius: 8px;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.84rem;
+        line-height: 1.75;
+        -webkit-overflow-scrolling: touch;
+      }
+      pre code {
+        font: inherit;
+      }
+      ul {
+        margin: 1.6rem 0 0;
+        padding-left: 1.2rem;
+      }
+      li {
+        margin-top: 0.55rem;
+        padding-left: 0.25rem;
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 4rem 0;
+      }
+      .closing {
+        color: var(--muted);
+        font-style: italic;
+      }
+      footer {
+        margin-top: 5rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      body {
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
+      }
+      .theme-toggle {
+        font: inherit;
+        font-size: 0.95rem;
+        color: var(--muted);
+        background: none;
+        border: 0;
+        padding: 0.25rem 0.5rem;
+        margin: -0.25rem -0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition:
+          color 0.2s ease,
+          transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .theme-toggle:active {
+        transform: scale(0.97);
+      }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .theme-toggle:hover {
+          color: var(--accent);
+        }
+      }
+      .nav-right {
+        display: flex;
+        align-items: baseline;
+        gap: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+
+    <main>
+      <nav>
+        <a href="/index.html">← Mrinal</a>
+        <div class="nav-right">
+          <span>writing</span>
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Switch theme"
+          >
+            Dark
+          </button>
+        </div>
+      </nav>
+
+      <header>
+        <div class="meta">6 October 2026 · 12 min read</div>
+        <h1>Building a Redis-like server from scratch</h1>
+        <p class="lede">
+          What happens when you stop using the abstraction and start rebuilding
+          the thing underneath it?
+        </p>
+      </header>
+
+      <article>
+        <p>
+          I've been spending a lot of time thinking about what actually happens
+          between calling a method and getting a result back. Most of the time
+          we don't need to care.
+        </p>
+        <p>That's the whole point of an abstraction.</p>
+        <p>
+          But every once in a while I find myself wanting to understand what is
+          hiding underneath it. That's usually when I stop using the library and
+          try to build a smaller version myself.
+        </p>
+
+        <h2>Why build it yourself?</h2>
+        <p>
+          Reading documentation gives you the interface. Reading source code
+          gives you the implementation. Building it yourself gives you the
+          constraints.
+        </p>
+        <p>Those constraints are usually the interesting part.</p>
+
+        <blockquote>
+          You don't really understand a system until you've had to make
+          decisions that the original authors had to make.
+        </blockquote>
+
+        <h2>Starting with the simplest thing</h2>
+        <p>
+          The first version doesn't need persistence, replication, transactions
+          or clever memory management.
+        </p>
+        <p>
+          It needs to accept a connection, understand a command and return a
+          response.
+        </p>
+
+        <div class="code-label">server.go</div>
+        <pre><code>listener, err := net.Listen("tcp", ":6379")
+if err != nil {
+    log.Fatal(err)
+}
+
+for {
+    conn, err := listener.Accept()
+    if err != nil {
+        continue
+    }
+
+    go handleConnection(conn)
+}</code></pre>
+
+        <p>There isn't much here, and that's intentional.</p>
+        <p>
+          I want every piece of complexity I add later to have a reason for
+          existing.
+        </p>
+
+        <h2>Then the problems start appearing</h2>
+        <p>
+          A single connection is easy. A thousand connections changes the
+          problem.
+        </p>
+        <ul>
+          <li>How should connections be scheduled?</li>
+          <li>What happens when a client is slow?</li>
+          <li>Where does memory get allocated?</li>
+          <li>What happens when the process crashes?</li>
+          <li>How do commands interact with each other?</li>
+        </ul>
+
+        <h2>The interesting part</h2>
+        <p>
+          This is where rebuilding the system becomes more useful than simply
+          reading about it.
+        </p>
+        <p>
+          You start noticing that the difficult parts aren't necessarily the
+          algorithms. They're the boundaries between things.
+        </p>
+
+        <hr />
+        <p class="closing">
+          There are still a lot of things I don't understand about this. That's
+          probably the reason I'm writing it down.
+        </p>
+      </article>
+
+      <footer>
+        <a href="#">← All writing</a>
+        <span>#systems #redis #go</span>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        var bar = document.getElementById("bar"),
+          ticking = false;
+        function update() {
+          var h = document.documentElement.scrollHeight - window.innerHeight;
+          var p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
+          bar.style.transform = "scaleX(" + p + ")";
+          ticking = false;
+        }
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          },
+          { passive: true },
+        );
+        window.addEventListener("resize", update);
+        update();
+      })();
+    </script>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var btn = document.getElementById("theme-toggle");
+        var media = window.matchMedia("(prefers-color-scheme: dark)");
+        function current() {
+          return (
+            root.getAttribute("data-theme") ||
+            (media.matches ? "dark" : "light")
+          );
+        }
+        function sync() {
+          var isDark = current() === "dark";
+          btn.textContent = isDark ? "Light" : "Dark";
+          btn.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light theme" : "Switch to dark theme",
+          );
+        }
+        btn.addEventListener("click", function () {
+          var next = current() === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("theme", next);
+          } catch (e) {}
+          sync();
+        });
+        media.addEventListener("change", function () {
+          var saved = null;
+          try {
+            saved = localStorage.getItem("theme");
+          } catch (e) {}
+          if (!saved) sync();
+        });
+        sync();
+      })();
+    </script>
+  </body>
+</html>
