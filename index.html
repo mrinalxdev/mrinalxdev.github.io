@@ -79,7 +79,7 @@
         background: color-mix(in srgb, var(--accent) 25%, transparent);
       }
       main {
-        max-width: 38rem;
+        max-width: 54rem;
         margin: 0 auto;
         padding: 6rem 1.5rem 7rem;
       }
@@ -189,6 +189,7 @@
       ul.plain {
         margin: 0;
         padding-left: 1.2rem;
+        max-width: 38rem;
       }
       ul.plain li {
         margin-top: 0.6rem;
@@ -200,57 +201,174 @@
       .inline-link {
         text-decoration-color: var(--muted);
       }
-      .project + .project {
-        margin-top: 2.5rem;
-      }
-      .row {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 1rem;
-      }
-      h3 {
-        font-size: 1.25rem;
-        line-height: 1.4;
-      }
-      .project p {
-        margin: 0.4rem 0 0;
-        color: var(--muted);
-        line-height: 1.7;
-      }
-      .project a.more {
-        display: inline-block;
-        margin-top: 0.6rem;
-        font-size: 0.95rem;
-      }
-      /* .posts a {
-        display: flex;
-        justify-content: space-between;
-        gap: 1.5rem;
-        padding: 0.6rem 0;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-      .posts .mono {
-        flex-shrink: 0;
-        padding-top: 0.25rem;
-      } */
-      .posts a {
-        display: block;
-        padding: 0.7rem 0;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-      .posts .meta {
-        display: block;
-        margin-top: 0.1rem;
-      }
       footer {
         display: flex;
         flex-wrap: wrap;
         gap: 0.75rem 1.75rem;
         font-size: 0.95rem;
         color: var(--muted);
+      }
+
+      /* ---------- Writing: posts + tag panel ---------- */
+      .writing {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 12rem;
+        column-gap: 6rem;
+        align-items: start;
+      }
+
+      .posts a {
+        position: relative;
+        isolation: isolate;
+        display: block;
+        padding: 0.7rem 0;
+        text-decoration: none;
+      }
+      /* the left-to-right fill */
+      .posts a::before {
+        content: "";
+        position: absolute;
+        inset: 0 -0.9rem;
+        z-index: -1;
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--accent) 13%, transparent);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.75s var(--ease);
+        transition-delay: var(--fill-delay, 0ms);
+      }
+      .posts a.lit::before {
+        transform: scaleX(1);
+      }
+      .posts .meta {
+        display: block;
+        margin-top: 0.1rem;
+      }
+
+      .tags {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+        padding-top: 0.45rem;
+      }
+      .tag {
+        position: relative;
+        font: inherit;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--muted);
+        background: none;
+        border: 0;
+        padding: 0.2rem 0 0.2rem 1.3rem;
+        cursor: pointer;
+        text-align: left;
+        transition:
+          color 0.25s ease,
+          transform 0.15s var(--ease);
+      }
+      /* the node the wire starts from */
+      .tag::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        margin-top: -3.5px;
+        border-radius: 50%;
+        border: 1px solid var(--muted);
+        background: var(--bg);
+        transition:
+          background-color 0.3s ease,
+          border-color 0.3s ease;
+      }
+      .tag .count {
+        margin-left: 0.5rem;
+      }
+      .tag:active {
+        transform: scale(0.97);
+      }
+      .tag:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .tag[aria-pressed="true"] {
+        color: var(--text);
+      }
+      .tag[aria-pressed="true"]::before {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .tag:hover {
+          color: var(--accent);
+        }
+      }
+
+      /* the wire */
+      .wires {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+      .wire {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 1;
+        stroke-linecap: round;
+        opacity: 0.7;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: draw 0.9s var(--ease) forwards;
+        animation-delay: var(--wire-delay, 0ms);
+      }
+      .wire-end {
+        fill: var(--accent);
+        opacity: 0;
+        animation: pop 0.3s ease forwards;
+        animation-delay: calc(var(--wire-delay, 0ms) + 600ms);
+      }
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes pop {
+        to {
+          opacity: 0.85;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .writing {
+          grid-template-columns: 1fr;
+          row-gap: 1.75rem;
+        }
+        .tags {
+          order: -1;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 0.25rem 1.25rem;
+          padding-top: 0;
+        }
+        .wires {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .posts a::before,
+        .wire,
+        .wire-end {
+          transition: none;
+          animation-duration: 0.01ms;
+          animation-delay: 0ms;
+        }
       }
 
       body {
@@ -321,71 +439,62 @@
         </ul>
       </section>
 
-      <!-- <section>
-        <h2>Things I've built</h2>
-
-        <article class="project">
-          <div class="row">
-            <h3>StreamableMap</h3>
-            <span class="mono">Go</span>
-          </div>
-          <p>
-            A stream-oriented concurrent map exploring ordering, backpressure,
-            and efficient event processing.
-          </p>
-          <a class="more" href="#">GitHub</a>
-        </article>
-
-        <article class="project">
-          <div class="row">
-            <h3>Vidflow</h3>
-            <span class="mono">Go</span>
-          </div>
-          <p>
-            A video processing DAG exploring exactly-once execution,
-            backpressure, and distributed media workloads.
-          </p>
-          <a class="more" href="#">GitHub</a>
-        </article>
-
-        <article class="project">
-          <div class="row">
-            <h3>OpenTelemetry Bridge</h3>
-            <span class="mono">Go</span>
-          </div>
-          <p>
-            A transparent sidecar for introducing distributed tracing into HTTP
-            applications without changing the application itself.
-          </p>
-          <a class="more" href="#">Read more</a>
-        </article>
-      </section> -->
-
       <section>
         <h2>Writing</h2>
-        <div class="posts">
-          <a href="/articles/serverless.html">
-            <span>Serverless from beginners POV</span>
-            <span class="mono meta">Article · 2026</span>
-          </a>
-          <a
-            href="https://x.com/Hi_Mrinal/status/2110251049919586483"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>Knowing when to scale horizontally and vertically</span>
-            <span class="mono meta">Post on X ↗ · 2026</span>
-          </a>
-          <a
-            href="https://x.com/Hi_Mrinal/status/2109474133994353028"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>Something on Polymorphism in C++</span>
-            <span class="mono meta">Post on X ↗ · 2026</span>
-          </a>
+        <div class="writing" id="writing">
+          
+          <div class="posts">
+            <a href="/" data-tags="ml">
+              <span>Reinforce From First Principles</span>
+              <span class="mono meta">Article · 2026 ( Currently working )</span>
+            </a>
+            <a href="https://x.com/Hi_Mrinal/status/2113904941899428102?s=20" data-tags="reflection">
+              <span>How to retain the most as a Software engineer</span>
+              <span class="mono meta">Post on X ↗ · 2026</span>
+            </a>
+            <a href="/articles/serverless.html" data-tags="technical">
+              <span>Serverless from beginners POV</span>
+              <span class="mono meta">Article · 2026</span>
+            </a>
+            <a
+              href="https://x.com/Hi_Mrinal/status/2110251049919586483"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-tags="personal"
+            >
+              <span>Knowing when to scale horizontally and vertically</span>
+              <span class="mono meta">Post on X ↗ · 2026</span>
+            </a>
+            <a
+              href="https://x.com/Hi_Mrinal/status/2109474133994353028"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-tags="technical"
+            >
+              <span>Something on Polymorphism in C++</span>
+              <span class="mono meta">Post on X ↗ · 2026</span>
+            </a>
+          </div>
+
+          <div class="tags" role="group" aria-label="Filter writing by tag">
+            <button class="tag" type="button" data-tag="technical" aria-pressed="false">
+              technical<span class="mono count"></span>
+            </button>
+            <button class="tag" type="button" data-tag="ml" aria-pressed="false">
+              machine learning<span class="mono count"></span>
+            </button>
+            <button class="tag" type="button" data-tag="personal" aria-pressed="false">
+              personal experience<span class="mono count"></span>
+            </button>
+            <button class="tag" type="button" data-tag="reflection" aria-pressed="false">
+              self reflection<span class="mono count"></span>
+            </button>
+          </div>
+
+          <svg class="wires" id="wires" aria-hidden="true"></svg>
         </div>
       </section>
+
       <footer>
         <a href="https://github.com/mrinalxdev">GitHub</a>
         <a href="https://x.com/Hi_Mrinal">X</a>
@@ -401,6 +510,7 @@
         </button>
       </footer>
     </main>
+
     <script>
       (function () {
         var root = document.documentElement;
@@ -436,6 +546,93 @@
           if (!saved) sync();
         });
         sync();
+      })();
+
+      /* ---------- Tag filter: fill + wires ---------- */
+      (function () {
+        var wrap = document.getElementById("writing");
+        var svg = document.getElementById("wires");
+        var posts = Array.prototype.slice.call(wrap.querySelectorAll(".posts a"));
+        var tags = Array.prototype.slice.call(wrap.querySelectorAll(".tag"));
+        var NS = "http://www.w3.org/2000/svg";
+        var active = null;
+
+        function hasTag(post, tag) {
+          return (post.getAttribute("data-tags") || "").split(/\s+/).indexOf(tag) !== -1;
+        }
+
+        // post counts next to each tag
+        tags.forEach(function (t) {
+          var n = posts.filter(function (p) { return hasTag(p, t.dataset.tag); }).length;
+          t.querySelector(".count").textContent = n;
+        });
+
+        function drawWires(animate) {
+          svg.innerHTML = "";
+          if (!active || getComputedStyle(svg).display === "none") return;
+
+          var box = wrap.getBoundingClientRect();
+          var tagEl = wrap.querySelector('.tag[data-tag="' + active + '"]');
+          var tb = tagEl.getBoundingClientRect();
+          var x1 = tb.left - box.left + 3.5;
+          var y1 = tb.top - box.top + tb.height / 2;
+
+          var i = 0;
+          posts.forEach(function (p) {
+            if (!hasTag(p, active)) return;
+            var pb = p.getBoundingClientRect();
+            var x2 = pb.right - box.left + 14; // just past the fill's right edge
+            var y2 = pb.top - box.top + pb.height / 2;
+            var mid = (x1 + x2) / 2;
+            var delay = animate ? i * 90 : 0;
+
+            var path = document.createElementNS(NS, "path");
+            path.setAttribute("d", "M" + x1 + " " + y1 + " C" + mid + " " + y1 + " " + mid + " " + y2 + " " + x2 + " " + y2);
+            path.setAttribute("pathLength", "1");
+            path.setAttribute("class", "wire");
+            path.style.setProperty("--wire-delay", delay + "ms");
+            if (!animate) { path.style.animation = "none"; path.style.strokeDashoffset = "0"; }
+            svg.appendChild(path);
+
+            var dot = document.createElementNS(NS, "circle");
+            dot.setAttribute("cx", x2);
+            dot.setAttribute("cy", y2);
+            dot.setAttribute("r", "2.5");
+            dot.setAttribute("class", "wire-end");
+            dot.style.setProperty("--wire-delay", delay + "ms");
+            if (!animate) { dot.style.animation = "none"; dot.style.opacity = "0.85"; }
+            svg.appendChild(dot);
+            i++;
+          });
+        }
+
+        function select(tag) {
+          active = active === tag ? null : tag; // click again to clear
+          tags.forEach(function (t) {
+            t.setAttribute("aria-pressed", String(t.dataset.tag === active));
+          });
+          var i = 0;
+          posts.forEach(function (p) {
+            var on = !!active && hasTag(p, active);
+            p.style.setProperty("--fill-delay", on ? i * 90 + "ms" : "0ms");
+            p.classList.toggle("lit", on);
+            if (on) i++;
+          });
+          drawWires(true);
+        }
+
+        tags.forEach(function (t) {
+          t.addEventListener("click", function () { select(t.dataset.tag); });
+        });
+
+        var raf;
+        window.addEventListener("resize", function () {
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(function () { drawWires(false); });
+        });
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { drawWires(false); });
+        }
       })();
     </script>
   </body>
