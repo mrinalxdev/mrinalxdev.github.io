@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+
+    <title>Serverless</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,0..72,400&family=IBM+Plex+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("theme");
+
+          if (theme === "dark" || theme === "light") {
+            document.documentElement.setAttribute("data-theme", theme);
+          } else {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+
+    <link rel="stylesheet" href="../core/main.css" />
+    <script src="../core/main.js" defer></script>
+
+    <!-- <link rel="stylesheet" href="../core/main.css" /> -->
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true">
+      <span id="progress-bar"></span>
+    </div>
+
+    <main>
+      <nav>
+        <a href="/index.html">← Mrinal</a>
+
+        <div class="nav-right">
+          <span>writing</span>
+
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Switch theme"
+          >
+            Dark
+          </button>
+        </div>
+      </nav>
+
+      <header>
+        <div class="meta">1 November 2026 · 30 min read</div>
+
+        <h1>Reinforce from first principles</h1>
+      </header>
+    </main>
+  </body>
+</html>
