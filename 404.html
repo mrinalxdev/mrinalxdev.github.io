@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>404 · Still writing this one</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t) document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Absolute paths so this works from any URL (a 404 can be served anywhere) -->
+    <link rel="stylesheet" href="/core/site.css" />
+  </head>
+  <body>
+    <main>
+      <nav class="topbar">
+        <a href="/index.html">← Mrinal</a>
+        <div class="nav-right">
+          <span>404</span>
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Switch theme"
+          >
+            Dark
+          </button>
+        </div>
+      </nav>
+
+      <header>
+        <div class="meta">404 · Not published yet</div>
+        <h1>I’m still writing this one.</h1>
+        <p class="lede">
+          The article you’re looking for isn’t out yet. It’s somewhere between
+          a rough draft and a final edit.
+        </p>
+      </header>
+
+      <section class="now-item">
+        <h2>In progress<span class="live" aria-hidden="true"></span></h2>
+        <!-- Edit the title and the stages below -->
+        <h3>Reinforce from first principles</h3>
+        <p>
+          A small deep dive into my recent project which i built and showcased
+        </p>
+        <ol class="stages" aria-label="Writing progress">
+          <li class="current">Research</li>
+          <li>Outline</li>
+          <!-- <li class="current" aria-current="step">Draft</li> -->
+           <li>Draft</li>
+          <li>Edit</li>
+        </ol>
+      </section>
+
+      <footer>
+        <a href="/index.html">← Back home</a>
+        <a href="https://github.com/mrinalxdev?tab=repositories">What else I’m working on</a>
+      </footer>
+    </main>
+
+    <script src="/core/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,679 @@
+/* ==========================================================
+   site.css — shared by index.html and now.html
+   (articles keep using core/main.css)
+   ========================================================== */
+
+:root {
+  --bg: #f7f5f0;
+  --code-bg: #eeebe3;
+  --text: #3a3631;
+  --muted: #756e63;
+  --line: #e6e1d6;
+  --accent: #7d6d55;
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1815;
+    --code-bg: #221f1b;
+    --text: #e0dbd1;
+    --muted: #9b9486;
+    --line: #2c2823;
+    --accent: #b9a98b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1815;
+  --code-bg: #221f1b;
+  --text: #e0dbd1;
+  --muted: #9b9486;
+  --line: #2c2823;
+  --accent: #b9a98b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Newsreader", Georgia, "Times New Roman", serif;
+  font-size: 1.1875rem;
+  line-height: 1.8;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+::selection {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+main {
+  max-width: 54rem;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 7rem;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+}
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+}
+
+/* ---------- Type ---------- */
+h1,
+h2,
+h3 {
+  font-weight: 400;
+  margin: 0;
+}
+h1 {
+  font-size: clamp(2.1rem, 6vw, 2.8rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+h2 {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+h3 {
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+li::marker {
+  color: var(--muted);
+}
+.mono {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ---------- Page load ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+main > * {
+  animation: rise 0.5s var(--ease) both;
+}
+main > :nth-child(2) {
+  animation-delay: 60ms;
+}
+main > :nth-child(3) {
+  animation-delay: 120ms;
+}
+main > :nth-child(4) {
+  animation-delay: 180ms;
+}
+main > :nth-child(5) {
+  animation-delay: 240ms;
+}
+main > :nth-child(6) {
+  animation-delay: 300ms;
+}
+main > :nth-child(7) {
+  animation-delay: 360ms;
+}
+
+/* ---------- Shared layout ---------- */
+header {
+  margin-bottom: 5rem;
+}
+section {
+  margin-bottom: 5rem;
+}
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* Top bar (now.html) */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.topbar a {
+  text-decoration: none;
+}
+.nav-right {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0.5rem;
+  margin: -0.25rem -0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    transform 0.15s var(--ease);
+}
+.theme-toggle:active {
+  transform: scale(0.97);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    color: var(--accent);
+  }
+}
+
+/* ---------- About ---------- */
+ul.plain {
+  margin: 0;
+  padding-left: 1.2rem;
+  max-width: 38rem;
+}
+ul.plain li {
+  margin-top: 0.6rem;
+  padding-left: 0.25rem;
+}
+ul.plain li:first-child {
+  margin-top: 0;
+}
+.inline-link {
+  text-decoration-color: var(--muted);
+}
+
+/* ---------- Now (home teaser) ---------- */
+h2 .live {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 0.65rem;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.1em;
+  animation: breathe 3.2s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  50% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+.now-card {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  max-width: 38rem;
+  padding: 0.7rem 0;
+  text-decoration: none;
+}
+/* same left-to-right fill as the writing list */
+.now-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 -0.9rem;
+  z-index: -1;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.75s var(--ease);
+}
+.now-card:focus-visible::before {
+  transform: scaleX(1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .now-card:hover::before {
+    transform: scaleX(1);
+  }
+}
+.now-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.15rem 0;
+}
+.now-more {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* ---------- Projects ---------- */
+.projects {
+  border-top: 1px solid var(--line);
+}
+.project {
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.project h3 a {
+  text-decoration: none;
+}
+.project p {
+  margin: 0.4rem 0 0;
+  max-width: 38rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* Languages + technologies (also used on now.html) */
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.stack li {
+  margin: 0;
+  padding: 0.1rem 0.65rem;
+  border-radius: 4px;
+  background: var(--code-bg);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.74rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.stack .lang {
+  color: var(--text);
+}
+
+/* Chips on the left, buttons on the right */
+.project-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem 1.5rem;
+  margin-top: 1.1rem;
+}
+.project-foot .stack {
+  margin: 0;
+}
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    border-color 0.25s ease,
+    transform 0.15s var(--ease);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s var(--ease);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn .glyph {
+  font-size: 0.85em;
+  color: var(--accent);
+}
+.btn:focus-visible::before {
+  transform: scaleX(1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Writing: posts + tag panel ---------- */
+.writing {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  column-gap: 6rem;
+  align-items: start;
+}
+.posts a {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  padding: 0.7rem 0;
+  text-decoration: none;
+}
+/* left-to-right fill */
+.posts a::before {
+  content: "";
+  position: absolute;
+  inset: 0 -0.9rem;
+  z-index: -1;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.75s var(--ease);
+  transition-delay: var(--fill-delay, 0ms);
+}
+.posts a.lit::before {
+  transform: scaleX(1);
+}
+.posts .meta {
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.tags {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding-top: 0.45rem;
+}
+.tag {
+  position: relative;
+  font: inherit;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  padding: 0.2rem 0 0.2rem 1.3rem;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    color 0.25s ease,
+    transform 0.15s var(--ease);
+}
+/* node the wire starts from */
+.tag::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  background: var(--bg);
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.tag .count {
+  margin-left: 0.5rem;
+}
+.tag:active {
+  transform: scale(0.97);
+}
+.tag:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.tag[aria-pressed="true"] {
+  color: var(--text);
+}
+.tag[aria-pressed="true"]::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tag:hover {
+    color: var(--accent);
+  }
+}
+
+/* wires */
+.wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.wire {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.7;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 0.9s var(--ease) forwards;
+  animation-delay: var(--wire-delay, 0ms);
+}
+.wire-end {
+  fill: var(--accent);
+  opacity: 0;
+  animation: pop 0.3s ease forwards;
+  animation-delay: calc(var(--wire-delay, 0ms) + 600ms);
+}
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pop {
+  to {
+    opacity: 0.85;
+  }
+}
+
+/* ---------- now.html ---------- */
+.meta {
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.lede {
+  margin: 1.5rem 0 0;
+  max-width: 38rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--muted);
+}
+.now-item p {
+  margin: 0.5rem 0 0;
+  max-width: 38rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* Stage tracker: a thin line per stage that fills left to right */
+.stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  max-width: 38rem;
+  list-style: none;
+}
+.stages li {
+  position: relative;
+  margin: 0;
+  padding: 0.75rem 0 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.stages li::before,
+.stages li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+}
+.stages li::before {
+  background: var(--line);
+}
+.stages li::after {
+  background: var(--accent);
+  transform: scaleX(var(--fill, 0));
+  transform-origin: left center;
+  animation: stage-fill 0.9s var(--ease) both;
+  animation-delay: calc(0.35s + var(--i, 0) * 140ms);
+}
+.stages li:nth-child(1) {
+  --i: 0;
+}
+.stages li:nth-child(2) {
+  --i: 1;
+}
+.stages li:nth-child(3) {
+  --i: 2;
+}
+.stages li:nth-child(4) {
+  --i: 3;
+}
+.stages .done {
+  --fill: 1;
+}
+.stages .current {
+  --fill: 0.5;
+  color: var(--text);
+}
+@keyframes stage-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ---------- Responsive + motion ---------- */
+@media (max-width: 720px) {
+  .writing {
+    grid-template-columns: 1fr;
+    row-gap: 1.75rem;
+  }
+  .tags {
+    order: -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    padding-top: 0;
+  }
+  .wires {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 1.125rem;
+  }
+  main {
+    padding-top: 4rem;
+  }
+  .topbar {
+    margin-bottom: 3.5rem;
+  }
+  .stages li {
+    font-size: 0.68rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  main > * {
+    animation: none;
+  }
+  .posts a::before,
+  .now-card::before,
+  .btn::before {
+    transition: none;
+  }
+  .wire,
+  .wire-end,
+  .stages li::after,
+  h2 .live {
+    animation: none;
+  }
+  .wire {
+    stroke-dashoffset: 0;
+  }
+  .wire-end {
+    opacity: 0.85;
+  }
+}
